@@ -1,0 +1,1302 @@
+/* Rectangle 9 */
+
+position: absolute;
+width: 1310px;
+height: 5129px;
+left: 0px;
+top: 387px;
+
+background: #FFFFE5;
+
+
+/* Rectangle 24 */
+
+position: absolute;
+width: 1214px;
+height: 855px;
+left: 43px;
+top: 2878px;
+
+background: #E8E8C1;
+border-radius: 50px;
+
+
+/* image 16 */
+
+position: absolute;
+width: 1267px;
+height: 845px;
+left: 43px;
+top: 2864px;
+
+background: url(image.png);
+
+
+/* Vector 1 */
+
+position: absolute;
+width: 134.55px;
+height: 469.5px;
+left: 610.5px;
+top: 1221px;
+
+
+
+/* image */
+
+position: absolute;
+width: 1310px;
+height: 983px;
+left: 0px;
+top: 0px;
+
+background: url(image.png);
+
+
+/* Rectangle 10 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 226px;
+height: 41px;
+left: 385px;
+top: 752px;
+
+background: #D0F1DB;
+border: 1px solid #228E73;
+border-radius: 20px;
+
+
+/* STEP INTO A GHIBLI DREAM */
+
+position: absolute;
+width: 657px;
+height: 146px;
+left: 48px;
+top: 107px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 60px;
+line-height: 73px;
+
+color: #FFFFE5;
+
+text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+
+
+/* Upload your photo and watch it come alive—like it's straight out of a Studio Ghibli film. */
+
+position: absolute;
+width: 701px;
+height: 61px;
+left: 48px;
+top: 272px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 25px;
+line-height: 30px;
+
+color: #FFFFE5;
+
+text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+
+
+/* Ghibli Dreamer */
+
+position: absolute;
+width: 182px;
+height: 30px;
+left: 90px;
+top: 49px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 25px;
+line-height: 30px;
+
+color: #FFFFE5;
+
+text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+
+
+/* Group 5 */
+
+position: absolute;
+width: 441px;
+height: 117px;
+left: 785px;
+top: 121px;
+
+
+
+/* Rectangle 6 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 412px;
+height: 102px;
+left: 785px;
+top: 121px;
+
+background: rgba(213, 233, 212, 0.35);
+border: 1px solid #ABEDA7;
+border-radius: 20px;
+
+
+/* Subscribe for more transformations and advanced features ✨ */
+
+position: absolute;
+width: 342px;
+height: 89px;
+left: 814px;
+top: 149px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 20px;
+line-height: 24px;
+
+color: rgba(255, 255, 255, 0.69);
+
+
+
+/* Rectangle 7 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 57px;
+height: 57px;
+left: 1169px;
+top: 143px;
+
+background: linear-gradient(138.82deg, #ADD2AB 2.92%, #E5E394 97.08%);
+border: 3px solid #006C2B;
+border-radius: 100px;
+
+
+/* Arrow 1 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 29.43px;
+height: 0px;
+left: 1186.1px;
+top: 182.9px;
+
+border: 3px solid #000000;
+transform: rotate(-44.22deg);
+
+
+/* image 7 */
+
+position: absolute;
+width: 36px;
+height: 36px;
+left: 48px;
+top: 44px;
+
+background: url(image.png);
+
+
+/* Subscription */
+
+position: absolute;
+width: 157px;
+height: 30px;
+left: 891px;
+top: 58px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 25px;
+line-height: 30px;
+text-align: center;
+
+color: #A8C8B1;
+
+
+
+/* Login */
+
+position: absolute;
+width: 68px;
+height: 30px;
+left: 1136px;
+top: 59px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 25px;
+line-height: 30px;
+text-align: center;
+
+color: #A8C8B1;
+
+
+
+/* Rectangle 8 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 521px;
+height: 339px;
+left: 91px;
+top: 381px;
+
+background: linear-gradient(136.41deg, rgba(34, 142, 115, 0.47) 24.38%, rgba(197, 255, 241, 0.47) 107.61%);
+border: 1px solid #00FF65;
+border-radius: 80px;
+
+
+/* Rectangle 26 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 645px;
+height: 204px;
+left: 612px;
+top: 2089px;
+
+background: rgba(140, 234, 210, 0.47);
+border: 1px solid #00FF65;
+border-radius: 40px;
+
+
+/* Rectangle 11 */
+
+position: absolute;
+width: 521px;
+height: 339px;
+left: 666px;
+top: 381px;
+
+background: linear-gradient(134.53deg, rgba(219, 191, 125, 0.46) 25.21%, rgba(255, 250, 238, 0.46) 112.79%);
+border-radius: 80px;
+
+
+/* Drag or upload your image here */
+
+position: absolute;
+width: 266px;
+height: 52px;
+left: 219px;
+top: 558px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 25px;
+line-height: 30px;
+text-align: center;
+
+color: #00FF65;
+
+
+
+/* Click “Transform” for results */
+
+position: absolute;
+width: 266px;
+height: 52px;
+left: 785px;
+top: 522px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 25px;
+line-height: 30px;
+text-align: center;
+
+color: rgba(255, 255, 255, 0.55);
+
+
+
+/* Style: */
+
+position: absolute;
+width: 94px;
+height: 35px;
+left: 105px;
+top: 758px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 25px;
+line-height: 30px;
+
+color: #D0F1DB;
+
+
+
+/* Ghibli Style */
+
+position: absolute;
+width: 147px;
+height: 35px;
+left: 402px;
+top: 762px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 20px;
+line-height: 24px;
+
+color: #006C2B;
+
+
+
+/* Polygon 1 */
+
+position: absolute;
+width: 16px;
+height: 16px;
+left: 596px;
+top: 780px;
+
+background: #006C2B;
+transform: rotate(-180deg);
+
+
+/* Rectangle 12 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 521px;
+height: 90px;
+left: 90px;
+top: 814px;
+
+background: rgba(124, 187, 145, 0.53);
+border: 1px solid #00FF65;
+border-radius: 50px;
+
+
+/* Transform Now */
+
+position: absolute;
+width: 188px;
+height: 30px;
+left: 249px;
+top: 844px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 25px;
+line-height: 30px;
+text-align: center;
+
+color: #00FF65;
+
+
+
+/* How It Works */
+
+position: absolute;
+width: 389px;
+height: 73px;
+left: 471px;
+top: 1071px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 60px;
+line-height: 73px;
+/* identical to box height */
+text-align: center;
+
+background: linear-gradient(90.94deg, #D1CFA2 -4.75%, #63B784 99.19%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+text-fill-color: transparent;
+
+
+
+/* Use Cases */
+
+position: absolute;
+width: 311px;
+height: 73px;
+left: 499px;
+top: 1961px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 60px;
+line-height: 73px;
+/* identical to box height */
+text-align: center;
+
+background: linear-gradient(90.94deg, #D1CFA2 -4.75%, #63B784 99.19%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+text-fill-color: transparent;
+
+
+
+/* Frequently Ask Question */
+
+position: absolute;
+width: 726px;
+height: 73px;
+left: 291px;
+top: 3863px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 60px;
+line-height: 73px;
+/* identical to box height */
+text-align: center;
+
+background: linear-gradient(90.94deg, #D1CFA2 -4.75%, #63B784 99.19%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+text-fill-color: transparent;
+
+
+
+/* Contact & Support */
+
+position: absolute;
+width: 543px;
+height: 73px;
+left: 383px;
+top: 4976px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 60px;
+line-height: 73px;
+/* identical to box height */
+text-align: center;
+
+background: linear-gradient(90.94deg, #D1CFA2 -4.75%, #63B784 99.19%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+text-fill-color: transparent;
+
+
+
+/* STEP 1: Upload your photo (portrait, pet, or anything you like) */
+
+position: absolute;
+width: 420px;
+height: 62px;
+left: 170px;
+top: 1221px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 26px;
+line-height: 31px;
+text-align: center;
+
+color: #000000;
+
+
+
+/* STEP 2: Click "Tranform" and let our magic do the rest */
+
+position: absolute;
+width: 388px;
+height: 62px;
+left: 786px;
+top: 1449px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 26px;
+line-height: 31px;
+text-align: center;
+
+color: #000000;
+
+
+
+/* STEP 3: Download and share your unique Ghibli-style artwork */
+
+position: absolute;
+width: 499px;
+height: 62px;
+left: 394px;
+top: 1741px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 26px;
+line-height: 31px;
+text-align: center;
+
+color: #000000;
+
+
+
+/* Group 6 */
+
+position: absolute;
+width: 56px;
+height: 56px;
+left: 320px;
+top: 470px;
+
+
+
+/* Rectangle 13 */
+
+position: absolute;
+width: 56px;
+height: 6px;
+left: 320px;
+top: 495px;
+
+background: #48BD6F;
+border-radius: 100px;
+
+
+/* Rectangle 14 */
+
+position: absolute;
+width: 56px;
+height: 6px;
+left: 345px;
+top: 526px;
+
+background: #48BD6F;
+border-radius: 100px;
+transform: rotate(-90deg);
+
+
+/* Group 7 */
+
+position: absolute;
+width: 180.16px;
+height: 182.09px;
+left: 220px;
+top: 1683px;
+
+
+
+/* image 10 */
+
+position: absolute;
+width: 155px;
+height: 155px;
+left: 237.11px;
+top: 1691px;
+
+background: url(image.png);
+
+
+/* Exclude */
+
+position: absolute;
+width: 175.68px;
+height: 174.99px;
+left: 224.48px;
+top: 1683.12px;
+
+background: #FFFFE5;
+
+
+/* Rectangle 15 */
+
+position: absolute;
+width: 175.68px;
+height: 174.99px;
+left: 224.48px;
+top: 1683.12px;
+
+background: #D9D9D9;
+
+
+/* Rectangle 16 */
+
+position: absolute;
+width: 152.07px;
+height: 139.57px;
+left: 236.28px;
+top: 1700.83px;
+
+background: #D9D9D9;
+border-radius: 113px;
+
+
+/* Exclude */
+
+position: absolute;
+width: 177.09px;
+height: 182.09px;
+left: 220px;
+top: 1683px;
+
+background: rgba(255, 255, 229, 0.73);
+filter: blur(9.5px);
+
+
+/* Rectangle 15 */
+
+position: absolute;
+width: 177.09px;
+height: 182.09px;
+left: 220px;
+top: 1683px;
+
+background: #D9D9D9;
+
+
+/* Rectangle 16 */
+
+position: absolute;
+width: 147.94px;
+height: 139.91px;
+left: 237.25px;
+top: 1701.43px;
+
+background: #D9D9D9;
+border-radius: 113px;
+
+
+/* Group 8 */
+
+position: absolute;
+width: 432px;
+height: 614.6px;
+left: 99px;
+top: 2108px;
+
+
+
+/* image 12 */
+
+position: absolute;
+width: 409.73px;
+height: 614.6px;
+left: 99px;
+top: 2108px;
+
+background: url(image.png);
+
+
+/* image 13 */
+
+position: absolute;
+width: 283.92px;
+height: 614.6px;
+left: 247.08px;
+top: 2108px;
+
+background: url(image.png);
+
+
+/* Rectangle 17 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 7.79px;
+height: 614.6px;
+left: 239.29px;
+top: 2108px;
+
+background: #006C2B;
+border: 1px solid #48BD6F;
+box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
+
+
+/* Rectangle 18 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 18.93px;
+height: 84.62px;
+left: 233.72px;
+top: 2395.26px;
+
+background: #006C2B;
+border: 1px solid #48BD6F;
+border-radius: 20px;
+
+
+/* Rectangle 19 */
+
+position: absolute;
+width: 3.34px;
+height: 40.08px;
+left: 241.52px;
+top: 2416.41px;
+
+background: #000000;
+border-radius: 30px;
+
+
+/* Rectangle 21 */
+
+position: absolute;
+width: 710px;
+height: 349px;
+left: 305px;
+top: 2900px;
+
+background: rgba(238, 255, 124, 0.27);
+filter: blur(81.75px);
+backdrop-filter: blur(13.2px);
+/* Note: backdrop-filter has minimal browser support */
+border-radius: 103px;
+
+
+/* Rectangle 22 */
+
+position: absolute;
+width: 252px;
+height: 264px;
+left: 425px;
+top: 3155px;
+
+background: rgba(47, 192, 86, 0.01);
+filter: blur(81.75px);
+backdrop-filter: blur(13.2px);
+/* Note: backdrop-filter has minimal browser support */
+border-radius: 103px;
+
+
+/* Rectangle 23 */
+
+position: absolute;
+width: 252px;
+height: 285px;
+left: 698.5px;
+top: 3155px;
+
+background: rgba(159, 108, 224, 0.26);
+filter: blur(81.75px);
+backdrop-filter: blur(13.2px);
+/* Note: backdrop-filter has minimal browser support */
+border-radius: 103px;
+
+
+/* Rectangle 20 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 534px;
+height: 598px;
+left: 382px;
+top: 3070px;
+
+background: linear-gradient(270deg, rgba(244, 255, 171, 0.66) 0%, rgba(196, 232, 190, 0.66) 100%);
+backdrop-filter: blur(8.25px);
+/* Note: backdrop-filter has minimal browser support */
+border-radius: 50px;
+
+
+/* Unlock the Magic */
+
+position: absolute;
+width: 430px;
+height: 61px;
+left: 439px;
+top: 2964px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 50px;
+line-height: 61px;
+/* identical to box height */
+text-align: center;
+
+color: #5EE692;
+
+
+
+/* ✔️ Unlimited Ghibli-style generations ✔️ High-resolution downloads ✔️ Exclusive member styles ✔️ Priority processing ✔️ Dedicated member support ✔️ Commercial use allowed ✔️ Cancel anytime */
+
+position: absolute;
+width: 448px;
+height: 468px;
+left: 454px;
+top: 3122px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 26px;
+line-height: 200%;
+/* or 52px */
+
+color: rgba(0, 108, 43, 0.62);
+
+
+
+/* Rectangle 25 */
+
+position: absolute;
+width: 477px;
+height: 86px;
+left: 406px;
+top: 3557px;
+
+background: #006C2B;
+border-radius: 50px;
+
+
+/* Subscribe now */
+
+position: absolute;
+width: 288px;
+height: 23px;
+left: 549px;
+top: 3576px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 26px;
+line-height: 200%;
+/* or 52px */
+
+color: #00FF65;
+
+
+
+/* Profile Pictures & Wallpapers */
+
+position: absolute;
+width: 368px;
+height: 52px;
+left: 781px;
+top: 2110px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 26px;
+line-height: 200%;
+/* identical to box height, or 52px */
+
+color: #006C2B;
+
+
+
+/* Stand out on social media or your devices with a magical, hand-crafted Ghibli-style portrait or landscape. Perfect for avatars, backgrounds, and more. */
+
+position: absolute;
+width: 419px;
+height: 120px;
+left: 781px;
+top: 2163px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 24px;
+
+color: #000000;
+
+
+
+/* 🖼️ */
+
+position: absolute;
+width: 100px;
+height: 91px;
+left: 655px;
+top: 2138px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 100px;
+line-height: 121px;
+
+color: #000000;
+
+
+
+/* Rectangle 27 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 645px;
+height: 196px;
+left: 612px;
+top: 2317px;
+
+background: #C9F5DC;
+border: 1px solid #00FF65;
+border-radius: 40px;
+
+
+/* Gifts for Friends & Family */
+
+position: absolute;
+width: 319px;
+height: 52px;
+left: 781px;
+top: 2348px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 26px;
+line-height: 200%;
+/* identical to box height, or 52px */
+
+color: #006C2B;
+
+
+
+/* Surprise your loved ones with a unique, personalized Ghibli-style artwork. Great for birthdays, holidays, or just because! */
+
+position: absolute;
+width: 419px;
+height: 72px;
+left: 781px;
+top: 2401px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 24px;
+
+color: #000000;
+
+
+
+/* Rectangle 28 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 645px;
+height: 196px;
+left: 612px;
+top: 2541px;
+
+background: #C9F5DC;
+border: 1px solid #00FF65;
+border-radius: 40px;
+
+
+/* Art Projects & Inspiration */
+
+position: absolute;
+width: 318px;
+height: 52px;
+left: 781px;
+top: 2572px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 26px;
+line-height: 200%;
+/* identical to box height, or 52px */
+
+color: #006C2B;
+
+
+
+/* Use your Ghibli art for creative projects, mood boards, or as inspiration for your next masterpiece. Let your imagination run wild! */
+
+position: absolute;
+width: 419px;
+height: 72px;
+left: 781px;
+top: 2625px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 24px;
+
+color: #000000;
+
+
+
+/* 🎁 */
+
+position: absolute;
+width: 100px;
+height: 100px;
+left: 654px;
+top: 2370px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 100px;
+line-height: 121px;
+
+color: #000000;
+
+
+
+/* 🎨 */
+
+position: absolute;
+width: 100px;
+height: 242px;
+left: 659px;
+top: 2580px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 100px;
+line-height: 121px;
+
+color: #000000;
+
+
+
+/* Yes! Your photo is only used for generating your artwork and is never shared or stored after processing. */
+
+position: absolute;
+width: 895px;
+height: 108px;
+left: 179px;
+top: 4032px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 30px;
+line-height: 36px;
+
+color: #000000;
+
+
+
+/* Is my photo safe? */
+
+position: absolute;
+width: 895px;
+height: 36px;
+left: 179px;
+top: 4016px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 30px;
+line-height: 36px;
+
+color: #006C2B;
+
+
+
+/* Usually just a few seconds. If the server is busy, it may take a bit longer. */
+
+position: absolute;
+width: 895px;
+height: 72px;
+left: 179px;
+top: 4232px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 30px;
+line-height: 36px;
+
+color: #000000;
+
+
+
+/* How long does it take to generate? */
+
+position: absolute;
+width: 895px;
+height: 36px;
+left: 179px;
+top: 4185px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 30px;
+line-height: 36px;
+
+color: #006C2B;
+
+
+
+/* You can cancel anytime in your account dashboard. Your access remains until the end of the billing period. */
+
+position: absolute;
+width: 895px;
+height: 72px;
+left: 179px;
+top: 4724px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 30px;
+line-height: 36px;
+
+color: #000000;
+
+
+
+/* Have questions or need help? Email us at novum@gmail.com */
+
+position: absolute;
+width: 895px;
+height: 72px;
+left: 205px;
+top: 5094px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 30px;
+line-height: 36px;
+
+color: #000000;
+
+
+
+/* How do I cancel my subscription? */
+
+position: absolute;
+width: 895px;
+height: 36px;
+left: 179px;
+top: 4677px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 30px;
+line-height: 36px;
+
+color: #006C2B;
+
+
+
+/* Yes! Subscribers can use their generated images for commercial purposes. */
+
+position: absolute;
+width: 895px;
+height: 72px;
+left: 179px;
+top: 4560px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 30px;
+line-height: 36px;
+
+color: #000000;
+
+
+
+/* Can I use the generated images commercially? */
+
+position: absolute;
+width: 895px;
+height: 36px;
+left: 179px;
+top: 4513px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 30px;
+line-height: 36px;
+
+color: #006C2B;
+
+
+
+/* Clear portraits, pets, or scenery with good lighting give the best results. */
+
+position: absolute;
+width: 895px;
+height: 72px;
+left: 179px;
+top: 4396px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 30px;
+line-height: 36px;
+
+color: #000000;
+
+
+
+/* What kind of photos work best? */
+
+position: absolute;
+width: 895px;
+height: 36px;
+left: 179px;
+top: 4349px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 30px;
+line-height: 36px;
+
+color: #006C2B;
+
+
+
+/* © 2025 Ghibli Dreamer. All rights reserved. */
+
+position: absolute;
+width: 406px;
+height: 24px;
+left: 452px;
+top: 5429px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 24px;
+
+color: #000000;
+
