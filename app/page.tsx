@@ -1,6 +1,8 @@
 "use client";
 import Image from "next/image";
 import { useRef, useState, useEffect } from "react";
+import { CONFIG } from './config/constants';
+import Link from "next/link";
 
 // Removed MOCK_USER as we will use actual logged-in user data
 // const MOCK_USER = {
@@ -87,14 +89,12 @@ export default function Home() {
         localStorage.removeItem('userState');
       }
     } else if (storedUnauthenticatedFreeCount !== null) {
-      // Initialize unauthenticated free count from storage if logged out
       setUnauthenticatedFreeCount(parseInt(storedUnauthenticatedFreeCount, 10));
     } else {
-       // If no user data and no unauthenticated free count, set initial free count
-       setUnauthenticatedFreeCount(1); // Set initial free trial for unauthenticated users
-       localStorage.setItem('unauthenticatedFreeCount', '1');
+      setUnauthenticatedFreeCount(CONFIG.FREE_TRIAL.UNAUTHENTICATED_USER_LIMIT);
+      localStorage.setItem('unauthenticatedFreeCount', CONFIG.FREE_TRIAL.UNAUTHENTICATED_USER_LIMIT.toString());
     }
-  }, []); // Empty dependency array ensures this runs only once on mount
+  }, []);
 
   // Effect to fetch authenticated user state when jwt changes
   useEffect(() => {
@@ -108,8 +108,8 @@ export default function Home() {
         if (storedUnauthenticatedFreeCount !== null) {
           setUnauthenticatedFreeCount(parseInt(storedUnauthenticatedFreeCount, 10));
         } else {
-          setUnauthenticatedFreeCount(1);
-          localStorage.setItem('unauthenticatedFreeCount', '1');
+          setUnauthenticatedFreeCount(CONFIG.FREE_TRIAL.UNAUTHENTICATED_USER_LIMIT);
+          localStorage.setItem('unauthenticatedFreeCount', CONFIG.FREE_TRIAL.UNAUTHENTICATED_USER_LIMIT.toString());
         }
     }
   }, [jwt]);
@@ -341,8 +341,9 @@ export default function Home() {
             <a href="/subscription" className="text-white font-bold text-base md:text-lg drop-shadow" style={{fontFamily:'Inter'}}>Subscription</a>
             {/* Conditionally render user info or Login link */}
             {user ? (
-              <div className="flex items-center gap-3">
-                 {user.picture && (
+              <>
+                <Link href="/profile" className="flex items-center gap-3 cursor-pointer">
+                  {user.picture && (
                     <Image
                       src={user.picture}
                       alt={user.name || 'User'}
@@ -350,18 +351,18 @@ export default function Home() {
                       height={32}
                       className="rounded-full"
                     />
-                 )}
-                 <span className="text-white font-bold text-base md:text-lg drop-shadow" style={{fontFamily:'Inter'}}>
-                    {user.name || user.email} {/* Display name or email */}
-                 </span>
-                 <button 
-                    onClick={handleLogout}
-                    className="text-white/80 hover:text-white font-bold text-sm drop-shadow underline"
-                    style={{fontFamily:'Inter'}}
-                 >
-                    Logout
-                 </button>
-              </div>
+                  )}
+                  <span className="text-white font-bold text-base md:text-lg drop-shadow" style={{fontFamily:'Inter'}}>
+                    {user.name || user.email}
+                  </span>
+                </Link>
+                <button 
+                  onClick={handleLogout}
+                  className="text-white/80 hover:text-white font-bold text-sm drop-shadow underline"
+                  style={{fontFamily:'Inter'}}>
+                  Logout
+                </button>
+              </>
             ) : (
               <a href="/login" className="text-white font-bold text-base md:text-lg drop-shadow" style={{fontFamily:'Inter'}}>Login</a>
             )}

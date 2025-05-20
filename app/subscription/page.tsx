@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { CONFIG } from '../config/constants';
 
 export default function SubscriptionPage() {
   const router = useRouter();
@@ -56,7 +57,7 @@ export default function SubscriptionPage() {
             <ul className="space-y-4 mb-8">
               <li className="flex items-center">
                 <span className="text-[#7fc97f] mr-2">✓</span>
-                1 free image transformation
+                {CONFIG.FREE_TRIAL.AUTHENTICATED_USER_LIMIT} free image transformations
               </li>
               <li className="flex items-center">
                 <span className="text-[#7fc97f] mr-2">✓</span>

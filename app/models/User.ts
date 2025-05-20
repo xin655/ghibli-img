@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { CONFIG } from '../config/constants';
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -38,7 +39,7 @@ const userSchema = new mongoose.Schema({
   usage: {
     freeTrialsRemaining: {
       type: Number,
-      default: 100,
+      default: CONFIG.FREE_TRIAL.AUTHENTICATED_USER_LIMIT,
     },
     totalTransformations: {
       type: Number,

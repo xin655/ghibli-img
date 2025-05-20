@@ -1,8 +1,7 @@
 import connectDB from '@/app/lib/db';
 import User from '@/app/models/User'; // Import the Mongoose User model
 import { Document, Types } from 'mongoose'; // Import Document and Types for typing
-
-const FREE_TRIAL_LIMIT = 100; // 免费试用次数限制
+import { CONFIG } from '../config/constants';
 
 // Define an interface for the User document structure
 interface IUserDocument extends Document {
@@ -69,7 +68,7 @@ function userToUserState(user: IUserDocument | IUserLean): UserState {
     _id: user._id.toString(),
     userId: user.googleId,
     email: user.email,
-    freeTrialCount: Math.min(user.usage?.freeTrialsRemaining ?? 0, FREE_TRIAL_LIMIT),
+    freeTrialCount: Math.min(user.usage?.freeTrialsRemaining ?? 0, CONFIG.FREE_TRIAL.AUTHENTICATED_USER_LIMIT),
     isSubscribed: user.subscription?.status === 'active',
     subscriptionStatus: user.subscription?.status,
     totalTransformations: user.usage?.totalTransformations ?? 0,
@@ -86,11 +85,11 @@ export async function getUserState(userId: string): Promise<UserState | null> {
   }
 
   // If user exists, check and update free trials if necessary
-  if (user.usage.freeTrialsRemaining < FREE_TRIAL_LIMIT) {
+  if (user.usage.freeTrialsRemaining < CONFIG.FREE_TRIAL.AUTHENTICATED_USER_LIMIT) {
     // Need to fetch the non-lean document to update and save.
     const fullUser = await User.findOne<IUserDocument>({ googleId: userId });
     if (fullUser) {
-      fullUser.usage.freeTrialsRemaining = FREE_TRIAL_LIMIT;
+      fullUser.usage.freeTrialsRemaining = CONFIG.FREE_TRIAL.AUTHENTICATED_USER_LIMIT;
       await fullUser.save();
       // Fetch again as lean to return consistent format
       const updatedUser = await User.findOne<IUserDocument>({ googleId: userId }).lean<IUserLean>();
@@ -114,8 +113,8 @@ export async function createUserState(userId: string, email: string, name: strin
   // Check if user already exists to prevent duplicates
   let user = await User.findOne<IUserDocument>({ googleId: userId });
   if (user) {
-    if (user.usage.freeTrialsRemaining < FREE_TRIAL_LIMIT) {
-      user.usage.freeTrialsRemaining = FREE_TRIAL_LIMIT;
+    if (user.usage.freeTrialsRemaining < CONFIG.FREE_TRIAL.AUTHENTICATED_USER_LIMIT) {
+      user.usage.freeTrialsRemaining = CONFIG.FREE_TRIAL.AUTHENTICATED_USER_LIMIT;
       await user.save();
     }
     return userToUserState(user);

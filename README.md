@@ -12,7 +12,7 @@
 1. 克隆项目到本地
 ```bash
 git clone [项目地址]
-cd ghibli-img4
+cd ghibli-img-web
 ```
 
 2. 安装依赖
@@ -44,7 +44,7 @@ http://localhost:3000
 ## 项目结构
 
 ```
-ghibli-img4/
+ghibli-img-web/
 ├── app/                # Next.js 应用主目录
 │   ├── page.tsx       # 主页面
 │   └── api/           # API 路由

@@ -5,6 +5,10 @@ if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing STRIPE_SECRET_KEY');
 }
 
+if (!process.env.STRIPE_PRICE_ID) {
+  throw new Error('Missing STRIPE_PRICE_ID');
+}
+
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2023-10-16',
 });
@@ -17,17 +21,16 @@ export async function createCheckoutSession(userId: string, email: string) {
   }
 
   const session = await stripe.checkout.sessions.create({
-    mode: 'subscription',
-    payment_method_types: ['card'],
+    customer_email: email,
     line_items: [
       {
         price: SUBSCRIPTION_PRICE_ID,
         quantity: 1,
       },
     ],
-    success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/subscription/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/subscription/cancel`,
-    customer_email: email,
+    mode: 'subscription',
+    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment-cancel`,
     metadata: {
       userId,
     },
@@ -80,4 +83,4 @@ export async function handleSubscriptionChange(event: Stripe.Event) {
       });
       break;
   }
-} 
+}
