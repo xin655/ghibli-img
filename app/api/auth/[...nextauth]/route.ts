@@ -1,9 +1,10 @@
-import NextAuth from "next-auth";
+import NextAuth, { AuthOptions, Session, User } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { kv } from "@vercel/kv";
 import { UserProfile } from "@/app/profile/page"; // Assuming UserProfile matches KV structure
+import { JWT } from "next-auth/jwt";
 
-const handler = NextAuth({
+export const authOptions: AuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -13,23 +14,23 @@ const handler = NextAuth({
   ],
   secret: process.env.NEXTAUTH_SECRET,
   session: {
-    strategy: "jwt",
+    strategy: "jwt" as const,
   },
   callbacks: {
-    async jwt({ token, user, account, profile }) {
-      console.log('JWT Callback - Initial Token:', token);
-      console.log('JWT Callback - User:', user);
-      console.log('JWT Callback - Account:', account);
+    async jwt({ token, user, account, profile }: { token: JWT; user?: User; account?: any; profile?: any }) {
+      console.log('Server: JWT Callback - Initial Token:', token);
+      console.log('Server: JWT Callback - User:', user);
+      console.log('Server: JWT Callback - Account:', account);
 
       // Add user data to the token on initial sign-in
       if (account && user) {
         try {
           const userState = await kv.get<UserProfile>(`user:${user.email}`); // Assert type
-          console.log('JWT Callback - UserState from KV (initial sign-in):', userState);
+          console.log('Server: JWT Callback - UserState from KV (initial sign-in):', userState);
           // Spread userState only if it's a valid object
           return { ...token, id: user.id, ...(userState || {}) }; // Use user.id for token.id
         } catch (error) {
-            console.error('Error fetching userState in JWT callback (initial sign-in):', error);
+            console.error('Server: Error fetching userState in JWT callback (initial sign-in):', error);
              return { ...token, id: user.id }; // Return token with user id even if KV fetch fails
         }
       }
@@ -38,22 +39,22 @@ const handler = NextAuth({
       if (token.email) {
         try {
           const userState = await kv.get<UserProfile>(`user:${token.email}`); // Assert type
-           console.log('JWT Callback - UserState from KV (subsequent session):', userState);
+           console.log('Server: JWT Callback - UserState from KV (subsequent session):', userState);
           // Spread userState only if it's a valid object
           return { ...token, ...(userState || {}) }; // Spread userState onto the token
         } catch (error) {
-             console.error('Error fetching userState in JWT callback (subsequent session):', error);
+             console.error('Server: Error fetching userState in JWT callback (subsequent session):', error);
              return token; // Return existing token if KV fetch fails
         }
       }
 
-      console.log('JWT Callback - Returning token unchanged:', token);
+      console.log('Server: JWT Callback - Returning token unchanged:', token);
       return token;
     },
 
-    async session({ session, token }) {
-      console.log('Session Callback - Initial Session:', session);
-      console.log('Session Callback - Token:', token);
+    async session({ session, token }: { session: Session; token: JWT }) {
+      console.log('Server: Session Callback - Initial Session:', session);
+      console.log('Server: Session Callback - Token:', token);
 
       // Add properties from token to session's user object
       if (token && session.user) { // Check if session.user exists
@@ -64,14 +65,16 @@ const handler = NextAuth({
         session.user.stripeCustomerId = token.stripeCustomerId as string | undefined;
         // Add any other fields you added to the token in the jwt callback
 
-         console.log('Session Callback - Updated Session User:', session.user);
+         console.log('Server: Session Callback - Updated Session User:', session.user);
       }
 
-       console.log('Session Callback - Returning Session:', session);
+       console.log('Server: Session Callback - Returning Session:', session);
       return session;
     },
   },
   // 你可以在这里添加 pages 等配置
-});
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST }; 

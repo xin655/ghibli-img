@@ -1,8 +1,27 @@
 import { NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 import { getUserState } from '@/app/lib/userState';
-import { readFile } from 'fs/promises';
-import path from 'path';
+import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+import { Readable } from 'stream';
+
+// Initialize S3 Client
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+  },
+});
+
+// Helper function to convert stream to buffer (can reuse from transform route)
+async function streamToBuffer(stream: Readable): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    stream.on('data', (chunk) => chunks.push(chunk));
+    stream.on('end', () => resolve(Buffer.concat(chunks)));
+    stream.on('error', reject);
+  });
+}
 
 export async function GET(request: Request) {
   try {
@@ -15,7 +34,7 @@ export async function GET(request: Request) {
       );
     }
 
-    // Verify the token
+    // Verify the token (optional for download, but good for security)
     const secret = new TextEncoder().encode(
       process.env.JWT_SECRET || 'your-secret-key'
     );
@@ -35,43 +54,61 @@ export async function GET(request: Request) {
       );
     }
 
-    // Check user permissions
-    const userState = await getUserState(userId);
-    if (!userState) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
-    }
+    // Check user permissions (optional for download, based on your app logic)
+    // For now, assuming if they have the URL and are logged in, they can download.
+    // You might add logic here to check if the image belongs to the user.
 
-    // 从相对路径构建完整的文件路径
-    const imagePath = path.join(process.cwd(), 'public', imageUrl);
-    
+    // Extract S3 Key from the S3 URL
+    const url = new URL(imageUrl);
+    // Assuming the URL format is like https://your-bucket-name.s3.your-region.amazonaws.com/uploads/filename
+    const s3Key = url.pathname.substring(1); // Remove leading slash
+    const filename = s3Key.split('/').pop() || 'download'; // Extract filename or default
+    const fileExtension = filename.split('.').pop() || 'jpg'; // Extract extension or default
+
+    let imageBuffer: Buffer;
     try {
-      // 读取图片文件
-      const imageBuffer = await readFile(imagePath);
+      // Download image from S3
+      const { Body } = await s3Client.send(new GetObjectCommand({
+        Bucket: process.env.S3_BUCKET_NAME!,
+        Key: s3Key,
+      }));
 
-      // 设置响应头
-      const headers = new Headers();
-      headers.set('Content-Type', 'image/jpeg');
-      headers.set('Content-Disposition', `attachment; filename="ghibli-${style}-${Date.now()}.jpg"`);
+      if (!Body) {
+        throw new Error('Could not get image body from S3');
+      }
 
-      return new NextResponse(imageBuffer, {
-        status: 200,
-        headers,
-      });
-    } catch (error) {
-      console.error('File read error:', error);
+      // Convert stream to buffer
+      imageBuffer = await streamToBuffer(Body as Readable);
+
+    } catch (s3Error) {
+      console.error('Server: S3 download error in download route:', s3Error);
       return NextResponse.json(
-        { error: 'Image file not found' },
-        { status: 404 }
+        { error: 'Failed to download image from storage' },
+        { status: 500 }
       );
     }
+    
+    // Determine Content-Type based on file extension (basic approach)
+    let contentType = 'application/octet-stream';
+    if (fileExtension === 'jpg' || fileExtension === 'jpeg') contentType = 'image/jpeg';
+    if (fileExtension === 'png') contentType = 'image/png';
+    if (fileExtension === 'gif') contentType = 'image/gif';
+    if (fileExtension === 'webp') contentType = 'image/webp';
+
+    // Set response headers
+    const headers = new Headers();
+    headers.set('Content-Type', contentType);
+    headers.set('Content-Disposition', `attachment; filename="ghibli-${style}-${filename}"`);
+
+    return new NextResponse(imageBuffer, {
+      status: 200,
+      headers,
+    });
 
   } catch (error) {
-    console.error('Download error:', error);
+    console.error('Server: Download route error:', error);
     return NextResponse.json(
-      { error: 'Failed to download image' },
+      { error: 'Failed to process download request' },
       { status: 500 }
     );
   }

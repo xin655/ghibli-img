@@ -1,7 +1,28 @@
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 import { CONFIG } from '../config/constants';
 
-const userSchema = new mongoose.Schema({
+export interface IUserDocument extends Document {
+  email: string;
+  name: string;
+  photo: string;
+  googleId: string;
+  subscription: {
+    status: 'free' | 'active' | 'cancelled' | 'expired';
+    plan: 'free' | 'basic' | 'premium';
+    startDate?: Date;
+    endDate?: Date;
+    stripeCustomerId?: string;
+    stripeSubscriptionId?: string;
+  };
+  usage: {
+    freeTrialsRemaining: number;
+    totalTransformations: number;
+  };
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const userSchema = new mongoose.Schema<IUserDocument>({
   email: {
     type: String,
     required: true,
@@ -62,4 +83,4 @@ userSchema.pre('save', function(next) {
   next();
 });
 
-export default mongoose.models.User || mongoose.model('User', userSchema); 
+export default mongoose.models.User as mongoose.Model<IUserDocument> || mongoose.model<IUserDocument>('User', userSchema); 

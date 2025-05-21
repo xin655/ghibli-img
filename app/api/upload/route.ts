@@ -1,11 +1,18 @@
 import { NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
 import { jwtVerify } from 'jose';
 import connectDB from '@/app/lib/db';
 import Image from '@/app/models/Image';
 import User from '@/app/models/User';
 import mongoose from 'mongoose';
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+  },
+});
 
 export async function POST(req: Request) {
   try {
@@ -65,30 +72,33 @@ export async function POST(req: Request) {
       );
     }
 
-    // Convert file to buffer
+    // Convert file to buffer for S3 upload
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Create upload directory if it doesn't exist
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-    await mkdir(uploadDir, { recursive: true });
-
-    // Generate unique filename
+    // Generate unique filename for S3
     const filename = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
-    const filepath = path.join(uploadDir, filename);
+    const s3Key = `uploads/${filename}`;
     
-    // Save file to disk
-    await writeFile(filepath, buffer);
+    // Upload file to S3
+    const uploadParams = {
+      Bucket: process.env.S3_BUCKET_NAME!,
+      Key: s3Key,
+      Body: buffer,
+      ContentType: file.type,
+    };
 
-    // Create a temporary transformed URL (will be updated after actual transformation)
-    const tempTransformedUrl = `/uploads/${filename}`;
+    await s3Client.send(new PutObjectCommand(uploadParams));
+
+    // Construct the S3 public URL (adjust if using custom domain or private access)
+    const s3Url = `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Key}`;
 
     // Create image record in MongoDB (only for authenticated users)
     if(userId) {
       const image = await Image.create({
         userId: userId, // Use MongoDB _id instead of Google ID
-        originalUrl: `/uploads/${filename}`,
-        transformedUrl: tempTransformedUrl, // Provide a temporary URL
+        originalUrl: s3Url,
+        transformedUrl: s3Url, // Initially set transformed URL to original S3 URL
         style: 'ghibli', // Set a default style
         status: 'processing',
         metadata: {
@@ -99,9 +109,9 @@ export async function POST(req: Request) {
     }
      // Unauthenticated uploads are not tracked in the database
 
-    // Return the URL
+    // Return the S3 URL
     return NextResponse.json({
-      url: `/uploads/${filename}`,
+      url: s3Url,
       // imageId is not returned for unauthenticated uploads
     });
 
