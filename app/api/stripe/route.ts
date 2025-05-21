@@ -1,4 +1,5 @@
 import { headers } from 'next/headers';
+import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
@@ -9,7 +10,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY! as string, {
 export async function POST(req: Request) {
   try {
     const body = await req.text();
-    const signature = headers().get('stripe-signature');
+    const headersList = await headers();
+    const signature = headersList.get('stripe-signature');
 
     if (!signature) {
       return NextResponse.json(
