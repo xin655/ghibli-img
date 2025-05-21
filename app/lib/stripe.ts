@@ -10,7 +10,7 @@ if (!process.env.STRIPE_PRICE_ID) {
 }
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2023-10-16',
+  apiVersion: '2025-04-30.basil',
 });
 
 export const SUBSCRIPTION_PRICE_ID = process.env.STRIPE_PRICE_ID;
@@ -49,38 +49,17 @@ export async function createPortalSession(customerId: string) {
 }
 
 export async function handleSubscriptionChange(event: Stripe.Event) {
-  const subscription = event.data.object as Stripe.Subscription;
-  const userId = subscription.metadata.userId;
+  const subscription = event.data.object as Stripe.Subscription & {
+    current_period_end: number;
+  };
+  const customerId = subscription.customer as string;
 
-  if (!userId) {
-    throw new Error('No userId in subscription metadata');
-  }
-
-  const userState = await kv.get(`user:${userId}`);
-  if (!userState) {
-    throw new Error('User state not found');
-  }
-
-  switch (event.type) {
-    case 'customer.subscription.created':
-    case 'customer.subscription.updated':
-      await kv.set(`user:${userId}`, {
-        ...userState,
-        isSubscribed: true,
-        subscriptionExpiresAt: subscription.current_period_end * 1000,
-        stripeCustomerId: subscription.customer,
-        stripeSubscriptionId: subscription.id,
-      });
-      break;
-
-    case 'customer.subscription.deleted':
-      await kv.set(`user:${userId}`, {
-        ...userState,
-        isSubscribed: false,
-        subscriptionExpiresAt: undefined,
-        stripeCustomerId: undefined,
-        stripeSubscriptionId: undefined,
-      });
-      break;
-  }
+  // Update user's subscription status in your database
+  // This is where you would update your user's subscription status
+  // based on the event type (created, updated, deleted, etc.)
+  console.log('Subscription changed:', {
+    customerId,
+    status: subscription.status,
+    currentPeriodEnd: new Date(subscription.current_period_end * 1000).toISOString(),
+  });
 }

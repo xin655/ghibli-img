@@ -28,7 +28,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "sharp": "^0.34.1",
-    "stripe": "^18.1.0"
+    "stripe": "^18.1.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
