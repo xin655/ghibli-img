@@ -1,7 +1,8 @@
-import mongoose, { Document } from 'mongoose';
+import mongoose, { Document, Types } from 'mongoose';
 import { CONFIG } from '../config/constants';
 
 export interface IUserDocument extends Document {
+  _id: Types.ObjectId;
   email: string;
   name: string;
   photo: string;

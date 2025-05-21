@@ -8,6 +8,7 @@ import sharp from 'sharp';
 import OpenAI from 'openai';
 import { S3Client, GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { Readable } from 'stream';
+import { HydratedDocument } from 'mongoose';
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -52,8 +53,8 @@ async function streamToBuffer(stream: Readable): Promise<Buffer> {
 export async function POST(request: Request) {
   try {
     const token = request.headers.get('Authorization')?.split(' ')[1];
-    let userId: string | null = null; // Explicitly type userId as string or null
-    let user: IUserDocument | null = null; // Explicitly type user
+    let userId: string | null = null;
+    let user: IUserDocument | null = null;
     let isAuthenticated = false;
 
     // If token exists, attempt authentication
@@ -70,7 +71,8 @@ export async function POST(request: Request) {
 
         user = await User.findOne({ googleId });
         if (user) {
-          userId = user._id.toString(); // Convert ObjectId to string and assign to userId
+          // Use type assertion since we know _id exists and has toString()
+          userId = (user as any)._id.toString();
           isAuthenticated = true;
 
           // Use non-null assertion as userId is guaranteed to be a string here
