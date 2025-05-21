@@ -10,6 +10,7 @@
     "verify-env": "node -e \"console.log('MONGODB_URI:', process.env.MONGODB_URI ? 'defined' : 'undefined')\""
   },
   "dependencies": {
+    "@stripe/react-stripe-js": "^3.7.0",
     "@stripe/stripe-js": "^7.3.0",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/next-auth": "^3.15.0",
