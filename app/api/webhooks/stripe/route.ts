@@ -1,14 +1,15 @@
-import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
+import { NextResponse } from 'next/server';
 import { stripe, handleSubscriptionChange } from '@/app/lib/stripe';
 
 export async function POST(request: Request) {
   const body = await request.text();
-  const signature = headers().get('stripe-signature');
+  const headersList = await headers();
+  const signature = headersList.get('stripe-signature');
 
   if (!signature) {
     return NextResponse.json(
-      { error: 'No signature' },
+      { error: 'No signature provided' },
       { status: 400 }
     );
   }
@@ -17,7 +18,7 @@ export async function POST(request: Request) {
     const event = stripe.webhooks.constructEvent(
       body,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET || ''
+      process.env.STRIPE_WEBHOOK_SECRET!
     );
 
     // Handle subscription events
@@ -27,10 +28,10 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ received: true });
   } catch (error) {
-    console.error('Webhook error:', error);
+    console.error('Error handling webhook:', error);
     return NextResponse.json(
-      { error: 'Webhook handler failed' },
-      { status: 400 }
+      { error: 'Error handling webhook' },
+      { status: 500 }
     );
   }
 } 
