@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useRef, useState, useEffect } from "react";
 import { CONFIG } from './config/constants';
 import Link from "next/link";
+import { useSession, signIn, signOut } from 'next-auth/react';
 
 // Removed MOCK_USER as we will use actual logged-in user data
 // const MOCK_USER = {
@@ -30,89 +31,64 @@ interface LoggedInUser {
 }
 
 export default function Home() {
-  // Existing state variables
+  const { data: session, status } = useSession();
+  const [profile, setProfile] = useState<any>(null);
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [profileError, setProfileError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [user, setUser] = useState<LoggedInUser | null>(null);
-  const [selectedStyle, setSelectedStyle] = useState(STYLES[0].value);
+  const [selectedStyle, setSelectedStyle] = useState('ghibli');
   const [resultUrl, setResultUrl] = useState<string | null>(null);
-  const [freeCount, setFreeCount] = useState(0); // Authenticated user's free count
-  const [unauthenticatedFreeCount, setUnauthenticatedFreeCount] = useState(0); // Unauthenticated user's free count
-  const [showLimitDialog, setShowLimitDialog] = useState(false);
-  const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
-  const [jwt, setJwt] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [isTransforming, setIsTransforming] = useState(false);
   const [transformError, setTransformError] = useState<string | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
+  const [showLimitDialog, setShowLimitDialog] = useState(false);
+  const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
+  const [freeCount, setFreeCount] = useState(0);
+  const [unauthenticatedFreeCount, setUnauthenticatedFreeCount] = useState(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [avatarMenuOpen, setAvatarMenuOpen] = useState(false);
+  const avatarRef = useRef<HTMLDivElement>(null);
 
-  // 获取用户状态
-  async function fetchUserState() {
-    if (!jwt) return;
-
-    try {
-      const response = await fetch('/api/user/state', {
-        headers: {
-          'Authorization': `Bearer ${jwt}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch user state');
-      }
-
-      const data = await response.json();
-      setFreeCount(data.freeTrialCount);
-    } catch (error) {
-      console.error('Failed to fetch user state:', error);
-    }
-  }
-
-  // Effect to read user info and unauthenticated free count from localStorage on component mount
+  // 获取 profile 信息
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    const storedJwt = localStorage.getItem('jwt');
-    const storedUnauthenticatedFreeCount = localStorage.getItem('unauthenticatedFreeCount');
-
-    if (storedUser && storedJwt) {
-      try {
-        const parsedUser: LoggedInUser = JSON.parse(storedUser);
-        setUser(parsedUser);
-        setJwt(storedJwt);
-      } catch (e) {
-        console.error('Failed to parse user data from localStorage:', e);
-        localStorage.removeItem('user');
-        localStorage.removeItem('jwt');
-        localStorage.removeItem('userState');
-      }
-    } else if (storedUnauthenticatedFreeCount !== null) {
-      setUnauthenticatedFreeCount(parseInt(storedUnauthenticatedFreeCount, 10));
+    if (session && status === 'authenticated') {
+      setProfileLoading(true);
+      setProfileError(null);
+      fetch('/api/user/profile', { credentials: 'include' })
+        .then(async (res) => {
+          if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.error || 'Failed to fetch profile');
+          }
+          return res.json();
+        })
+        .then((data) => setProfile(data))
+        .catch((err) => setProfileError(err.message))
+        .finally(() => setProfileLoading(false));
     } else {
-      setUnauthenticatedFreeCount(CONFIG.FREE_TRIAL.UNAUTHENTICATED_USER_LIMIT);
-      localStorage.setItem('unauthenticatedFreeCount', CONFIG.FREE_TRIAL.UNAUTHENTICATED_USER_LIMIT.toString());
+      setProfile(null);
     }
-  }, []);
+  }, [session, status]);
 
-  // Effect to fetch authenticated user state when jwt changes
   useEffect(() => {
-    if (jwt) {
-      fetchUserState();
-      setUnauthenticatedFreeCount(0); // Reset unauthenticated count if logged in
-      localStorage.removeItem('unauthenticatedFreeCount'); // Clear unauthenticated count from storage
-    } else {
-       // If logged out, make sure unauthenticated count is loaded/initialized
-       const storedUnauthenticatedFreeCount = localStorage.getItem('unauthenticatedFreeCount');
-        if (storedUnauthenticatedFreeCount !== null) {
-          setUnauthenticatedFreeCount(parseInt(storedUnauthenticatedFreeCount, 10));
-        } else {
-          setUnauthenticatedFreeCount(CONFIG.FREE_TRIAL.UNAUTHENTICATED_USER_LIMIT);
-          localStorage.setItem('unauthenticatedFreeCount', CONFIG.FREE_TRIAL.UNAUTHENTICATED_USER_LIMIT.toString());
-        }
+    function handleClickOutside(event: MouseEvent) {
+      if (avatarRef.current && !avatarRef.current.contains(event.target as Node)) {
+        setAvatarMenuOpen(false);
+      }
     }
-  }, [jwt]);
+    if (avatarMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [avatarMenuOpen]);
 
   // Handle transform
   async function handleTransform() {
@@ -122,15 +98,31 @@ export default function Home() {
     }
 
     // 检查免费次数 (优先检查登录用户的次数，然后检查未登录用户的次数)
-    if (jwt) {
+    if (session) {
       // 已登录用户，检查后端返回的 freeCount
-      if (freeCount <= 0) {
+      if (!profile) {
+        // Profile not loaded yet, maybe show a loading indicator or wait
+        console.log('Profile not loaded, cannot transform yet.');
+        // Optionally set a specific error or disable the button while profile loads
+        setTransformError('Loading user profile, please wait...');
+        return;
+      }
+      // 已登录用户，免费次数检查依赖于后端 profile 数据
+      if (profile.freeTrialsRemaining <= 0) {
         setShowLimitDialog(true);
+        return;
+      }
+      // Ensure session user data is available (should be if session is authenticated, but added for safety)
+      if (!session.user || !session.user.email) {
+        setTransformError('User session data incomplete. Please try signing in again.');
         return;
       }
     } else {
       // 未登录用户，检查 localStorage 中的 unauthenticatedFreeCount
-      if (unauthenticatedFreeCount <= 0) {
+      // 读取 localStorage 中的当前未登录免费次数
+      const currentUnauthenticatedFreeCount = parseInt(localStorage.getItem('unauthenticatedFreeCount') || CONFIG.FREE_TRIAL.UNAUTHENTICATED_USER_LIMIT.toString(), 10);
+
+      if (currentUnauthenticatedFreeCount <= 0) {
         setShowLimitDialog(true);
         return;
       }
@@ -144,14 +136,8 @@ export default function Home() {
       const formData = new FormData();
       formData.append('file', selectedFile);
 
-      const headers: HeadersInit = {};
-      if (jwt) {
-        headers['Authorization'] = `Bearer ${jwt}`;
-      }
-
       const uploadResponse = await fetch('/api/upload', {
         method: 'POST',
-        headers: headers,
         body: formData,
       });
 
@@ -163,20 +149,16 @@ export default function Home() {
       setUploadedUrl(uploadData.url);
 
       // 然后进行转换
-      const transformHeaders: HeadersInit = {
-        'Content-Type': 'application/json',
-      };
-      if (jwt) {
-        transformHeaders['Authorization'] = `Bearer ${jwt}`;
-      }
-
       const transformResponse = await fetch('/api/transform', {
         method: 'POST',
-        headers: transformHeaders,
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           imageUrl: uploadData.url,
           style: selectedStyle,
         }),
+        credentials: 'include',
       });
 
       if (!transformResponse.ok) {
@@ -187,14 +169,15 @@ export default function Home() {
       const data = await transformResponse.json();
       setResultUrl(data.transformedImageUrl);
       
-      // 更新免费次数 (只在未登录时更新本地状态)
-      if (!jwt) {
-        setUnauthenticatedFreeCount(prev => prev - 1);
-        localStorage.setItem('unauthenticatedFreeCount', (unauthenticatedFreeCount - 1).toString());
-      } else {
-         // 已登录用户，从后端获取最新免费次数
-        await fetchUserState();
+      // Update free trial count for unauthenticated users AFTER successful transformation
+      if (!session) {
+        const currentUnauthenticatedFreeCount = parseInt(localStorage.getItem('unauthenticatedFreeCount') || CONFIG.FREE_TRIAL.UNAUTHENTICATED_USER_LIMIT.toString(), 10);
+        localStorage.setItem('unauthenticatedFreeCount', (currentUnauthenticatedFreeCount - 1).toString());
+        setUnauthenticatedFreeCount(currentUnauthenticatedFreeCount - 1); // Update state to reflect immediately
+        console.log('Unauthenticated free trial count decremented.', currentUnauthenticatedFreeCount - 1);
       }
+      // For authenticated users, the free trial count is decremented in the backend (/api/transform)
+
     } catch (error) {
       console.error('Transform error:', error);
       setTransformError(error instanceof Error ? error.message : 'Failed to transform image');
@@ -243,7 +226,7 @@ export default function Home() {
       return;
     }
 
-    if (!jwt) {
+    if (!session) {
       setDownloadError('Please login to download images');
       return;
     }
@@ -253,9 +236,6 @@ export default function Home() {
       setDownloadError(null);
 
       const response = await fetch(`/api/download?url=${encodeURIComponent(resultUrl)}&style=${selectedStyle}`, {
-        headers: {
-          'Authorization': `Bearer ${jwt}`,
-        },
       });
 
       if (!response.ok) {
@@ -288,13 +268,11 @@ export default function Home() {
   // Function to handle user logout
   function handleLogout() {
     // Clear all user-related state
-    setUser(null);
-    setJwt(null);
     setFreeCount(0);
     setPreviewUrl(null);
     setResultUrl(null);
     setUploadedUrl(null);
-    setSelectedStyle(STYLES[0].value);
+    setSelectedStyle('ghibli');
     
     // Clear all user-related data from localStorage
     localStorage.removeItem('user');
@@ -315,68 +293,109 @@ export default function Home() {
     setShowLimitDialog(false);
   }
 
+  // 头部用户信息
+  function Header() {
+    if (status === 'loading') return <div>Loading...</div>;
+    if (!session) {
+      return <button 
+        onClick={() => signIn('google')}
+        className="px-4 py-2 bg-white/20 hover:bg-white/30 active:bg-white/40 text-white font-medium rounded-full transition-all duration-150 shadow-sm hover:shadow-md active:shadow-sm"
+      >
+        Sign in
+      </button>;
+    }
+    return (
+      <div className="relative" ref={avatarRef}>
+        <button
+          className="flex items-center focus:outline-none cursor-pointer"
+          onClick={() => setAvatarMenuOpen((open) => !open)}
+          type="button"
+        >
+          <Image
+            src={session.user?.image || '/default-avatar.png'}
+            alt="User Avatar"
+            width={32}
+            height={32}
+            className="rounded-full border border-gray-300 shadow-sm cursor-pointer"
+          />
+        </button>
+        {avatarMenuOpen && (
+          <div className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg py-2 z-[100] border border-gray-200">
+            <Link
+              href="/profile"
+              className="block px-4 py-2 text-gray-700 text-sm transition-all duration-150 hover:bg-gray-100 active:bg-gray-200 rounded cursor-pointer"
+              onClick={() => setAvatarMenuOpen(false)}
+            >
+              个人主页
+            </Link>
+            <button
+              onClick={() => { setAvatarMenuOpen(false); signOut(); }}
+              className="block w-full text-left px-4 py-2 text-gray-700 text-sm transition-all duration-150 hover:bg-gray-100 active:bg-gray-200 rounded cursor-pointer"
+              type="button"
+            >
+              退出
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#FFFFE5] text-[#2d4c2f] font-sans">
       {/* 主视觉区 */}
-      <section className="relative min-h-screen flex flex-col justify-between overflow-hidden px-4 sm:px-8 max-w-7xl mx-auto">
+      <section className="relative min-h-screen flex flex-col justify-between overflow-hidden">
         {/* 背景图 */}
-        <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 w-screen">
           <Image
             src="/images/backgrounds/image1.png"
             alt="Background"
             fill
             style={{ objectFit: 'cover', objectPosition: 'center top' }}
             priority
+            className="w-full h-full"
           />
         </div>
+        {/* 内容容器 */}
+        <div className="relative z-10 px-4 sm:px-8 max-w-7xl mx-auto w-full">
         {/* 顶部导航栏 */}
-        <header className="relative z-10 flex justify-between items-center pt-6 pb-2 w-full">
+          <header className="flex justify-between items-center pt-6 pb-2 w-full">
           <div className="flex items-center gap-2">
-            <span className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-              <span className="text-xl font-bold text-white">🌱</span>
-            </span>
+              <Image
+                src="/images/icons/image 7.png"
+                alt="Ghibli Dreamer Logo"
+                width={32}
+                height={32}
+                className="w-8 h-8"
+              />
             <span className="font-bold text-lg md:text-2xl tracking-wide text-white drop-shadow" style={{fontFamily:'Inter',textShadow:'0px 2px 4px rgba(0,0,0,0.25)'}}>Ghibli Dreamer</span>
           </div>
           <div className="flex items-center gap-6 md:gap-8">
             <a href="/subscription" className="text-white font-bold text-base md:text-lg drop-shadow" style={{fontFamily:'Inter'}}>Subscription</a>
-            {/* Conditionally render user info or Login link */}
-            {user ? (
-              <>
-                <Link href="/profile" className="flex items-center gap-3 cursor-pointer">
-                  {user.picture && (
-                    <Image
-                      src={user.picture}
-                      alt={user.name || 'User'}
-                      width={32}
-                      height={32}
-                      className="rounded-full"
-                    />
-                  )}
-                  <span className="text-white font-bold text-base md:text-lg drop-shadow" style={{fontFamily:'Inter'}}>
-                    {user.name || user.email}
-                  </span>
-                </Link>
-                <button 
-                  onClick={handleLogout}
-                  className="text-white/80 hover:text-white font-bold text-sm drop-shadow underline"
-                  style={{fontFamily:'Inter'}}>
-                  Logout
-                </button>
-              </>
-            ) : (
-              <a href="/login" className="text-white font-bold text-base md:text-lg drop-shadow" style={{fontFamily:'Inter'}}>Login</a>
-            )}
+              <Header />
           </div>
           {/* 订阅卡片（PC端显示，移动端下移） */}
-          <div className="hidden md:flex absolute right-8 top-24 bg-white/20 rounded-2xl px-6 py-4 flex-col items-start shadow-lg backdrop-blur-md border border-white/30 min-w-[320px]">
-            <div className="flex items-center justify-between w-full">
-              <span className="text-white font-semibold">Subscribe</span>
-              <span className="ml-2 text-[#5EE692] text-xl">↗</span>
+            <div className="hidden md:flex absolute right-8 top-24 flex-col items-start">
+                {/* 订阅卡片内容 */}
+                <div className="relative bg-white/20 rounded-2xl px-6 py-4 flex-col items-start shadow-lg backdrop-blur-md border border-white/30 min-w-[400px] z-10">
+                    <Link href="/subscription" className="flex items-center justify-between w-full group">
+                        <span className="text-white font-semibold" style={{fontFamily:'Inter'}}>Subscribe</span>
+                        {/* 移除箭头图标 */}
+                        {/* <span className="ml-2 text-[#5EE692] text-xl">↗</span> */}
+                    </Link>
+                    <div className="text-white/80 mt-2 text-sm" style={{fontFamily:'Inter'}}>for more transformations<br/>and advanced features ✨</div>
+                    {/* 将叠加的图片移动到卡片内容div内部，并调整定位 */}
+                    <div className="absolute" style={{ right: '-30px', top: '15px', width: '60px', height: '60px' }}>
+                        <Image src="/images/icons/Rectangle 7.png" alt="Rectangle" width={60} height={60} className="absolute" style={{ top: 0, left: 0, zIndex: 15 }} />
+                        <Image src="/images/icons/Arrow 1.png" alt="Arrow" width={25} height={25} className="absolute" style={{ top: '18px', left: '18px', zIndex: 20 }} />
+                    </div>
+                </div>
+                {/* 移除旧的叠加图片容器 */}
+                {/* <div className="absolute" style={{ right: '-35px', top: '15px', width: '60px', height: '60px' }}>
+                    <Image src="/images/icons/Rectangle 7.png" alt="Rectangle" width={60} height={60} className="absolute" style={{ top: 0, left: 0, zIndex: 15 }} />
+                    <Image src="/images/icons/Arrow 1.png" alt="Arrow" width={25} height={25} className="absolute" style={{ top: '18px', left: '18px', zIndex: 20 }} />
+                </div> */}
             </div>
-            <div className="text-white/80 mt-2 text-sm">for more transformations<br/>and advanced features ✨</div>
-            <span className="absolute -right-6 -top-6 text-3xl select-none" style={{color:'#5EE692'}}>🌙</span>
-          </div>
-        </header>
         {/* 订阅卡片（移动端） */}
         <div className="flex md:hidden z-10 w-full justify-end mt-2">
           <div className="bg-white/20 rounded-2xl px-4 py-3 flex flex-col items-start shadow-lg backdrop-blur-md border border-white/30 min-w-[220px] max-w-xs">
@@ -387,8 +406,9 @@ export default function Home() {
             <div className="text-white/80 mt-2 text-xs">for more transformations and advanced features ✨</div>
           </div>
         </div>
+          </header>
         {/* 主内容区 */}
-        <main className="relative z-10 flex flex-col items-start justify-center flex-1 w-full pt-8 md:pt-24">
+          <main className="relative z-[1] flex flex-col items-start justify-center flex-1 w-full pt-8 md:pt-24">
           <h1 className="font-extrabold text-white mb-4 drop-shadow" style={{fontFamily:'Inter',fontSize:'2.2rem',lineHeight:'2.7rem',textShadow:'0px 2px 4px rgba(0,0,0,0.25)'}}>
             <span className="text-4xl md:text-5xl lg:text-6xl">STEP INTO A<br className="hidden md:block"/>GHIBLI DREAM</span>
           </h1>
@@ -483,6 +503,7 @@ export default function Home() {
             <div className="text-red-500 text-sm mb-4">{downloadError}</div>
           )}
         </main>
+        </div>
       </section>
 
       {/* How It Works */}
@@ -606,7 +627,13 @@ export default function Home() {
               <li className="flex items-center gap-3 text-[#5EE692] text-base md:text-lg font-semibold" style={{fontFamily:'Inter'}}><span className="text-xl text-black">✔</span> Commercial use allowed</li>
               <li className="flex items-center gap-3 text-[#5EE692] text-base md:text-lg font-semibold" style={{fontFamily:'Inter'}}><span className="text-xl text-black">✔</span> Cancel anytime</li>
             </ul>
-            <button className="w-full rounded-full py-3 bg-[#19B15E] text-white font-bold text-lg shadow hover:bg-[#00FF65] transition" style={{fontFamily:'Inter'}}>Subscribe now</button>
+            <Link
+              href="/subscription"
+              className="w-full rounded-full py-3 bg-[#19B15E] text-white font-bold text-lg shadow hover:bg-[#00FF65] transition text-center block"
+              style={{fontFamily:'Inter'}}
+            >
+              Subscribe now
+            </Link>
           </div>
         </div>
       </section>

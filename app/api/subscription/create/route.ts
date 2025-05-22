@@ -1,33 +1,36 @@
 import { NextResponse } from 'next/server';
 import { createCheckoutSession } from '@/app/lib/stripe';
 import { jwtVerify } from 'jose';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/lib/authOptions';
 
 export async function POST(request: Request) {
+  console.log('Server: Entering subscription create route POST function');
   try {
-    // Get the token from the Authorization header
-    const token = request.headers.get('Authorization')?.split(' ')[1];
-    if (!token) {
+    // Use getServerSession to get the user session
+    const session = await getServerSession(authOptions);
+    console.log('Server: subscription create route - session:', session);
+
+    if (!session || !session.user || !session.user.id || !session.user.email) {
+      console.log('Server: Authentication required - No valid session found');
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
       );
     }
 
-    // Verify the token
-    const secret = new TextEncoder().encode(
-      process.env.JWT_SECRET || 'your-secret-key'
-    );
-    
-    const { payload } = await jwtVerify(token, secret);
-    const userId = payload.userId as string;
-    const email = payload.email as string;
+    // Extract userId and email from the NextAuth session
+    const userId = session.user.id;
+    const email = session.user.email;
 
-    // Create Stripe checkout session
-    const session = await createCheckoutSession(userId, email);
+    console.log(`Server: Authenticated user: userId=${userId}, email=${email}`);
 
-    return NextResponse.json({ url: session.url });
+    // Create Stripe checkout session using userId and email from session
+    const stripeSession = await createCheckoutSession(userId, email);
+
+    return NextResponse.json({ url: stripeSession.url });
   } catch (error) {
-    console.error('Create subscription error:', error);
+    console.error('Server: Create subscription error:', error);
     return NextResponse.json(
       { error: 'Failed to create subscription' },
       { status: 500 }

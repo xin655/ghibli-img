@@ -61,5 +61,5 @@ export async function handleSubscriptionChange(event: Stripe.Event) {
     customerId,
     status: subscription.status,
     currentPeriodEnd: new Date(subscription.current_period_end * 1000).toISOString(),
-  });
-}
+      });
+} 

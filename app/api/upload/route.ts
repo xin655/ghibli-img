@@ -5,6 +5,8 @@ import Image from '@/app/models/Image';
 import User from '@/app/models/User';
 import mongoose from 'mongoose';
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/lib/authOptions";
 
 const s3Client = new S3Client({
   region: process.env.AWS_REGION,
@@ -16,35 +18,32 @@ const s3Client = new S3Client({
 
 export async function POST(req: Request) {
   try {
-    // Get the token from the Authorization header
-    const token = req.headers.get('Authorization')?.split(' ')[1];
+    // Use getServerSession to get the user session
+    const session = await getServerSession(authOptions);
+    console.log('Server: upload route - session:', session);
+
     let userId = null;
     let user = null;
+    let isAuthenticated = false;
 
-    if (token) {
-      // If token exists, process as authenticated user
-      // Verify the token
-      const secret = new TextEncoder().encode(
-        process.env.JWT_SECRET || 'your-secret-key'
-      );
-      
-      const { payload } = await jwtVerify(token, secret);
-      const googleId = payload.userId as string;
-
-      // Connect to database
+    if (session?.user?.email) {
+      isAuthenticated = true;
       await connectDB();
+      // Find user by email from session to get their MongoDB _id
+      user = await User.findOne({ email: session.user.email });
 
-      // Find the user by Google ID to get their MongoDB _id
-      user = await User.findOne({ googleId });
       if (!user) {
-        return NextResponse.json(
-          { error: 'User not found' },
-          { status: 404 }
-        );
+        // This case should ideally not happen if session exists and is valid
+        // but handle defensively
+        console.error('Server: User not found in DB for session email:', session.user.email);
+        // Proceeding without userId for unauthenticated-like handling, or return error?
+        // Given the current flow, we'll proceed without userId if DB user is not found
+        // but log an error as it indicates a potential data inconsistency.
+      } else {
+        userId = user._id;
       }
-      userId = user._id;
     } else {
-      // If no token, allow upload but don't associate with a user
+      // If no session, process as unauthenticated user
       console.log('Processing unauthenticated upload');
     }
 

@@ -1,6 +1,9 @@
+// Server: Loading transform route file
+console.log('Server: Loading transform route file');
+
 import { NextResponse } from 'next/server';
-import { canTransformImage, incrementFreeTrialCount } from '@/app/lib/userState';
-import { jwtVerify } from 'jose';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/lib/authOptions';
 import connectDB from '@/app/lib/db';
 import Image from '@/app/models/Image';
 import User, { IUserDocument } from '@/app/models/User';
@@ -50,48 +53,59 @@ async function streamToBuffer(stream: Readable): Promise<Buffer> {
   });
 }
 
+// Test route to verify routing is working
+export async function GET() {
+  console.log('Server: Test GET route hit');
+  return NextResponse.json({ message: 'Transform API is working' });
+}
+
+// Main transform route handler
 export async function POST(request: Request) {
+  console.log('Server: Entering transform route POST function');
+  console.log('Server: NEXTAUTH_SECRET is set:', !!process.env.NEXTAUTH_SECRET);
+
   try {
-    const token = request.headers.get('Authorization')?.split(' ')[1];
-    let userId: string | null = null;
+    const session = await getServerSession(authOptions);
+    console.log('Server: transform route - session:', session);
+
     let user: IUserDocument | null = null;
+    let userId: string | null = null;
     let isAuthenticated = false;
 
-    // If token exists, attempt authentication
-    if (token) {
-      try {
-        const secret = new TextEncoder().encode(
-          process.env.JWT_SECRET || 'your-secret-key'
+    if (session?.user?.email) {
+      isAuthenticated = true;
+      await connectDB();
+      // Find user by email from session
+      user = await User.findOne({ email: session.user.email });
+
+      if (!user) {
+        // This case should ideally not happen if session exists and is valid
+        return NextResponse.json(
+          { error: 'User not found in database' },
+          { status: 404 }
         );
-        
-        const { payload } = await jwtVerify(token, secret);
-        const googleId = payload.userId as string;
+      }
 
-        await connectDB();
-
-        user = await User.findOne({ googleId });
-        if (user) {
-          // Use type assertion since we know _id exists and has toString()
-          userId = (user as any)._id.toString();
-          isAuthenticated = true;
-
-          // Use non-null assertion as userId is guaranteed to be a string here
-          const { canTransform, reason } = await canTransformImage(userId!); 
-          if (!canTransform) {
+      // Check free trial limits for authenticated users
+      if (!user.subscription || user.subscription.status === 'free') {
+        if (user.usage.freeTrialsRemaining <= 0) {
             return NextResponse.json(
-              { error: reason || 'Cannot transform image' },
+            { error: 'Free trial limit reached. Please subscribe.' },
               { status: 403 }
             );
           }
-        } else {
-           return NextResponse.json(
-              { error: 'User not found' },
-              { status: 404 }
-            );
-        }
-      } catch (jwtError) {
-        console.error('Server: JWT verification failed:', jwtError);
       }
+      // If subscribed, allow transformation (you might add plan checks here if needed)
+      userId = user._id.toString(); // Use MongoDB ObjectId as userId
+    } else {
+      // Handle unauthenticated users
+      // Based on our previous decision, unauthenticated user free trial is handled on frontend.
+      // If backend is reached without authentication, it means frontend check passed or was bypassed.
+      // For simplicity and security, we require authentication for backend transform.
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
     }
 
     // Get the image data from the request body
@@ -118,6 +132,9 @@ export async function POST(request: Request) {
     const s3Key = url.pathname.substring(1); // Remove leading slash
     const filename = s3Key.split('/').pop() || 'image.png'; // Extract filename
 
+    console.log('Server: Transform - Received imageUrl:', imageUrl);
+    console.log('Server: Transform - Derived s3Key:', s3Key);
+
     // Find the original image in database (only if user is authenticated)
     let originalImage = null;
     if(isAuthenticated && userId) {
@@ -136,7 +153,9 @@ export async function POST(request: Request) {
     }
 
     let imageBuffer: Buffer;
+    let imageMetadata: sharp.Metadata; // Add variable to store image metadata
     try {
+      console.log('Server: Transform - Attempting to download from S3 with key:', s3Key);
       // Download image from S3
       const { Body } = await s3Client.send(new GetObjectCommand({
         Bucket: process.env.S3_BUCKET_NAME!,
@@ -150,8 +169,12 @@ export async function POST(request: Request) {
       // Convert stream to buffer for OpenAI
       imageBuffer = await streamToBuffer(Body as Readable);
 
+      // Get image metadata (including dimensions) using sharp
+      imageMetadata = await sharp(imageBuffer).metadata();
+
     } catch (s3Error) {
-      console.error('Server: S3 download error:', s3Error);
+      console.error('Server: S3 download error details:', s3Error);
+      console.error('Server: S3 download error:', (s3Error as Error).message);
       return NextResponse.json(
         { error: 'Failed to download image from storage' },
         { status: 500 }
@@ -162,32 +185,52 @@ export async function POST(request: Request) {
         // Generate DALL-E prompt based on style
         const dallEPrompt = styleToPrompt(style, basePrompt || 'a beautiful image');
 
-        // Create variation using the image buffer
-        const variationResponse = await openai.images.createVariation({
-            model: "dall-e-2",
-            image: new File([imageBuffer], filename, { type: originalImage?.metadata?.format || 'image/png' }), // Use extracted filename
+        // Generate a full white mask with the same dimensions as the original image
+        if (!imageMetadata || !imageMetadata.width || !imageMetadata.height) {
+            throw new Error('Could not get image dimensions for mask generation');
+        }
+        const maskBuffer = await sharp({
+            create: {
+                width: imageMetadata.width,
+                height: imageMetadata.height,
+                channels: 4, // RGBA
+                background: { r: 255, g: 255, b: 255, alpha: 1 }
+            }
+        }).png().toBuffer();
+
+        // Create File objects for image and mask
+        const imageFile = new File([imageBuffer], filename, { type: imageMetadata.format ? `image/${imageMetadata.format}` : 'image/png' });
+        const maskFile = new File([maskBuffer], 'mask.png', { type: 'image/png' });
+
+        // Use images.edit API
+        const variationResponse = await openai.images.edit({
+            model: "gpt-image-1", // Use the specified model
+            image: imageFile,
+            mask: maskFile,
+            prompt: dallEPrompt, // Use the style-based prompt
             n: 1,
-            size: "1024x1024",
-            response_format: "b64_json"
+            size: "1024x1024", // Adjust size as needed, ensure it's compatible with gpt-image-1
         });
 
-        if (!variationResponse.data?.[0]?.b64_json) {
-            throw new Error('No image data received from DALL-E');
+        // **SAFE ACCESS:** Check if data and b64_json exist
+        const image_base64 = variationResponse.data?.[0]?.b64_json;
+
+        if (!image_base64) {
+            throw new Error('No valid image data received from DALL-E');
         }
 
         // Get the transformed image data
-        const image_base64 = variationResponse.data[0].b64_json;
-        const image_bytes = Buffer.from(image_base64, 'base64');
+        const image_base64_bytes = Buffer.from(image_base64, 'base64'); // Renamed to avoid conflict
 
         // Generate unique filename for transformed image in S3
         const transformedFileName = `transformed_${Date.now()}.png`;
         const transformedS3Key = `uploads/${transformedFileName}`;
-
+        
         // Upload transformed image to S3
         const transformedUploadParams = {
           Bucket: process.env.S3_BUCKET_NAME!,
           Key: transformedS3Key,
-          Body: image_bytes,
+          Body: image_base64_bytes, // Use renamed variable
           ContentType: 'image/png', // DALL-E outputs PNG
         };
 
@@ -201,13 +244,20 @@ export async function POST(request: Request) {
             originalImage.transformedUrl = transformedS3Url;
             originalImage.style = style;
             originalImage.status = 'completed';
-            // Update transformed image metadata (optional)
-            // originalImage.metadata.transformedSize = image_bytes.length;
+            // Update image metadata (optional)
+            // originalImage.metadata.transformedSize = image_base64_bytes.length; // Use renamed variable
             // Add width/height if you process the image with sharp after DALL-E
             await originalImage.save();
 
             // Use non-null assertion as userId is guaranteed to be a string here
-            await incrementFreeTrialCount(userId!); 
+            // Increment usage for authenticated users after successful transformation
+            if(isAuthenticated && user) {
+                if (user.subscription.status === 'free') {
+                    user.usage.freeTrialsRemaining -= 1;
+                }
+                user.usage.totalTransformations += 1;
+                await user.save();
+            }
         }
 
         // Return the transformed image URL

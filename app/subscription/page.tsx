@@ -3,16 +3,17 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CONFIG } from '../config/constants';
+import { useSession } from 'next-auth/react';
 
 export default function SubscriptionPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const { data: session, status } = useSession();
 
   const handleSubscribe = async () => {
     setIsLoading(true);
     try {
-      const jwt = localStorage.getItem('jwt');
-      if (!jwt) {
+      if (status !== 'authenticated') {
         router.push('/login');
         return;
       }
@@ -21,8 +22,8 @@ export default function SubscriptionPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${jwt}`
-        }
+        },
+        body: JSON.stringify({ /* potentially include plan details here if needed */ }),
       });
 
       const data = await response.json();

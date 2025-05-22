@@ -21,6 +21,7 @@ export interface IUserDocument extends Document {
   };
   createdAt: Date;
   updatedAt: Date;
+  lastLoginAt?: Date;
 }
 
 const userSchema = new mongoose.Schema<IUserDocument>({
@@ -76,6 +77,7 @@ const userSchema = new mongoose.Schema<IUserDocument>({
     type: Date,
     default: Date.now,
   },
+  lastLoginAt: Date,
 });
 
 // Update the updatedAt timestamp before saving
