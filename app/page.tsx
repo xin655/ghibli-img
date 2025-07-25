@@ -668,7 +668,7 @@ export default function Home() {
       {/* 联系方式与页脚 */}
       <footer className="py-8 px-4 bg-[#FFFFE5] flex flex-col items-center text-center text-[#3b6b4b]">
         <div className="mb-2">Contact & Support</div>
-        <div className="mb-2">Have questions or need help? Email us at <a href="mailto:novum@gmail.com" className="underline">novum@gmail.com</a></div>
+        <div className="mb-2">Have questions or need help? Email us at <a href="mailto:notesinnocamp@gmail.com" className="underline">notesinnocamp@gmail.com</a></div>
         <div className="text-xs text-[#a0b88b] mt-2">© 2025 Ghibli Dreamer. All rights reserved.</div>
       </footer>
 
