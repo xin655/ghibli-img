@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import { CONFIG } from './config/constants';
 import Link from "next/link";
 import { useSession, signIn, signOut } from 'next-auth/react';
+import ReactCompareImage from 'react-compare-image';
 
 // Removed MOCK_USER as we will use actual logged-in user data
 // const MOCK_USER = {
@@ -575,9 +576,18 @@ export default function Home() {
           Use Cases
         </h2>
         <div className="flex flex-col md:flex-row gap-8 w-full max-w-5xl justify-center items-stretch">
-          {/* 左侧大插画 */}
+          {/* 左侧大插画改为交互式对比 */}
           <div className="flex-1 flex items-center justify-center mb-8 md:mb-0">
-            <img src="/images/img/Group 8.png" alt="Use Cases Illustration" className="rounded-3xl shadow-lg object-cover border border-[#E8E8C1]" style={{width:'432px',height:'480px',borderWidth:'1px',background:'#E8E8C1',maxWidth:'100%',minWidth:'220px'}} />
+            <div style={{ width: 432, height: 480 }}>
+              <ReactCompareImage
+                leftImage="/images/img/779516f51440bf2da2f7ccf0b8bf0d8a09f8c513.png"
+                rightImage="/images/img/a300a83ccb414bb92a2d6a10baec1301d1871e95.png"
+                sliderLineWidth={2}
+                sliderLineColor="#0070f3"
+                handleSize={40}
+                aspectRatio="wider"
+              />
+            </div>
           </div>
           {/* 右侧卡片组 */}
           <div className="flex-1 flex flex-col gap-6 justify-center">

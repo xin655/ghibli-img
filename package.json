@@ -27,6 +27,7 @@
     "next-auth": "^4.24.11",
     "openai": "^4.100.0",
     "react": "^19.0.0",
+    "react-compare-image": "^3.5.6",
     "react-dom": "^19.0.0",
     "sharp": "^0.34.1",
     "stripe": "^18.1.1"
