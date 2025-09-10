@@ -1,0 +1,6 @@
+id,Customer ID,Customer Description,Customer Email,Plan,Quantity,Currency,Interval,Amount,Status,Created (UTC),Start Date (UTC),Current Period Start (UTC),Current Period End (UTC),Customer Name
+sub_1S5OwNETPwR1qydL8G8QXT9x,cus_T1NTQ2jS1V8XVZ,,test@example.com,price_1S5KqnETPwR1qydL3HqQgTeR,1,usd,month,9.99,active,2025-09-09 10:38,2025-09-09 10:38,2025-09-09 10:38,2025-10-09 10:38,Test User
+sub_1S5OnDETPwR1qydLRsX8hxLW,cus_T1NTQ2jS1V8XVZ,,test@example.com,price_1S5KtNETPwR1qydLM0k0et1R,1,usd,month,49.99,active,2025-09-09 10:28,2025-09-09 10:28,2025-09-09 10:28,2025-10-09 10:28,Test User
+sub_1S5LriETPwR1qydLRt7YQnqt,cus_T1NTQ2jS1V8XVZ,,test@example.com,price_1S5Ks8ETPwR1qydL0zcZ1Wle,1,usd,month,19.99,active,2025-09-09 07:21,2025-09-09 07:21,2025-09-09 07:21,2025-10-09 07:21,Test User
+sub_1S5LhfETPwR1qydLYfTnXbTH,cus_T1NTQ2jS1V8XVZ,,test@example.com,price_1S5KqnETPwR1qydL3HqQgTeR,1,usd,month,9.99,active,2025-09-09 07:10,2025-09-09 07:10,2025-09-09 07:10,2025-10-09 07:10,Test User
+sub_1S5LEAETPwR1qydLEUKepjRw,cus_T1NTQ2jS1V8XVZ,,test@example.com,price_1S5KqnETPwR1qydL3HqQgTeR,1,usd,month,9.99,active,2025-09-09 06:40,2025-09-09 06:40,2025-09-09 06:40,2025-10-09 06:40,Test User

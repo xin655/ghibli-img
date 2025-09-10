@@ -1,5 +1,5 @@
 {
-  "name": "temp_project",
+  "name": "ghibli-img-web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,30 +7,36 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "verify-env": "node -e \"console.log('MONGODB_URI:', process.env.MONGODB_URI ? 'defined' : 'undefined')\""
+    "check-env": "node scripts/check-env.js",
+    "test:webhook": "node scripts/quick-stripe-test.js",
+    "test:webhook:listen": "node scripts/stripe-listen.js",
+    "test:webhook:simulate": "node scripts/simulate-stripe-webhook.js",
+    "test:user-status": "node scripts/check-user-status.js",
+    "test:usage-update": "node scripts/test-usage-update.js",
+    "test:windows": "scripts\\quick-test-windows.bat",
+    "test:windows:full": "scripts\\test-subscription-windows.bat",
+    "test:windows:ps": "powershell -ExecutionPolicy Bypass -File scripts\\test-subscription-windows.ps1",
+    "test:subscription-management": "node scripts/test-subscription-management.js"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.812.0",
-    "@stripe/react-stripe-js": "^3.7.0",
-    "@stripe/stripe-js": "^7.3.0",
+    "@radix-ui/react-tabs": "^1.1.13",
     "@types/jsonwebtoken": "^9.0.9",
-    "@types/next-auth": "^3.15.0",
-    "@vercel/kv": "^3.0.0",
     "axios": "^1.9.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "dotenv": "^16.5.0",
-    "express": "^5.1.0",
-    "firebase": "^11.7.3",
     "google-auth-library": "^9.15.1",
     "jose": "^6.0.11",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.14.3",
-    "next-auth": "^4.24.11",
     "openai": "^4.100.0",
     "react": "^19.0.0",
-    "react-compare-image": "^3.5.6",
     "react-dom": "^19.0.0",
+    "recharts": "^3.2.0",
     "sharp": "^0.34.1",
-    "stripe": "^18.1.1"
+    "stripe": "^18.5.0",
+    "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -38,6 +44,8 @@
     "@types/node": "^20.17.50",
     "@types/react": "^19.1.4",
     "@types/react-dom": "^19.1.5",
+    "eslint": "9.34.0",
+    "eslint-config-next": "15.5.2",
     "next": "^15.3.2",
     "tailwindcss": "^4",
     "typescript": "^5.8.3"
