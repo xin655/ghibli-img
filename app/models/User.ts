@@ -7,17 +7,17 @@ export interface IUserDocument extends Document {
   name: string;
   photo: string;
   googleId: string;
-  subscription: {
-    status: 'free' | 'active' | 'cancelled' | 'expired';
-    plan: 'free' | 'basic' | 'premium';
-    startDate?: Date;
-    endDate?: Date;
-    stripeCustomerId?: string;
-    stripeSubscriptionId?: string;
-  };
+  isAdmin?: boolean;
   usage: {
     freeTrialsRemaining: number;
     totalTransformations: number;
+  };
+  subscription?: {
+    plan?: 'free' | 'basic' | 'pro' | 'enterprise';
+    isActive: boolean;
+    stripeCustomerId?: string;
+    stripeSubscriptionId?: string;
+    currentPeriodEnd?: Date;
   };
   createdAt: Date;
   updatedAt: Date;
@@ -36,28 +36,16 @@ const userSchema = new mongoose.Schema<IUserDocument>({
   },
   photo: {
     type: String,
-    required: true,
+    default: '',
   },
   googleId: {
     type: String,
     required: true,
     unique: true,
   },
-  subscription: {
-    status: {
-      type: String,
-      enum: ['free', 'active', 'cancelled', 'expired'],
-      default: 'free',
-    },
-    plan: {
-      type: String,
-      enum: ['free', 'basic', 'premium'],
-      default: 'free',
-    },
-    startDate: Date,
-    endDate: Date,
-    stripeCustomerId: String,
-    stripeSubscriptionId: String,
+  isAdmin: {
+    type: Boolean,
+    default: false,
   },
   usage: {
     freeTrialsRemaining: {
@@ -67,6 +55,26 @@ const userSchema = new mongoose.Schema<IUserDocument>({
     totalTransformations: {
       type: Number,
       default: 0,
+    },
+  },
+  subscription: {
+    plan: {
+      type: String,
+      enum: ['free', 'basic', 'pro', 'enterprise'],
+      default: 'free',
+    },
+    isActive: {
+      type: Boolean,
+      default: false,
+    },
+    stripeCustomerId: {
+      type: String,
+    },
+    stripeSubscriptionId: {
+      type: String,
+    },
+    currentPeriodEnd: {
+      type: Date,
     },
   },
   createdAt: {

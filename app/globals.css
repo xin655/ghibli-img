@@ -3,6 +3,16 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  
+  /* 吉卜力品牌色彩系统 */
+  --ghibli-primary: #2D5016;      /* 森林绿 */
+  --ghibli-secondary: #8B4513;    /* 大地棕 */
+  --ghibli-accent: #FFD700;       /* 温暖金 */
+  --ghibli-sky: #87CEEB;          /* 天空蓝 */
+  --ghibli-cloud: #F0F8FF;        /* 云朵白 */
+  --ghibli-shadow: #2F4F2F;       /* 深绿阴影 */
+  --ghibli-warm: #FFF8DC;         /* 温暖米色 */
+  --ghibli-earth: #D2B48C;        /* 大地色 */
 }
 
 @theme inline {
@@ -10,6 +20,16 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  
+  /* 吉卜力主题色彩 */
+  --color-ghibli-primary: var(--ghibli-primary);
+  --color-ghibli-secondary: var(--ghibli-secondary);
+  --color-ghibli-accent: var(--ghibli-accent);
+  --color-ghibli-sky: var(--ghibli-sky);
+  --color-ghibli-cloud: var(--ghibli-cloud);
+  --color-ghibli-shadow: var(--ghibli-shadow);
+  --color-ghibli-warm: var(--ghibli-warm);
+  --color-ghibli-earth: var(--ghibli-earth);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -23,4 +43,103 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* 自定义动画 */
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-down {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(45, 80, 22, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(45, 80, 22, 0.6);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+.animate-slide-down {
+  animation: slide-down 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* 吉卜力主题渐变背景 */
+.ghibli-gradient-bg {
+  background: linear-gradient(135deg, 
+    var(--ghibli-sky) 0%, 
+    var(--ghibli-cloud) 50%, 
+    var(--ghibli-warm) 100%);
+}
+
+.ghibli-card-gradient {
+  background: linear-gradient(145deg, 
+    rgba(255, 255, 255, 0.9) 0%, 
+    rgba(240, 248, 255, 0.8) 100%);
+  backdrop-filter: blur(10px);
+}
+
+.ghibli-button-gradient {
+  background: linear-gradient(135deg, 
+    var(--ghibli-primary) 0%, 
+    var(--ghibli-secondary) 100%);
+}
+
+.ghibli-button-gradient:hover {
+  background: linear-gradient(135deg, 
+    var(--ghibli-shadow) 0%, 
+    var(--ghibli-primary) 100%);
 }
