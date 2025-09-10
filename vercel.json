@@ -1,0 +1,24 @@
+{
+  "functions": {
+    "app/api/upload/route.ts": {
+      "maxDuration": 10
+    },
+    "app/api/transform/route.ts": {
+      "maxDuration": 10
+    },
+    "app/api/billing/webhook/route.ts": {
+      "maxDuration": 10
+    }
+  },
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "build": {
+    "env": {
+      "NEXT_TELEMETRY_DISABLED": "1"
+    }
+  },
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "installCommand": "npm install"
+}
